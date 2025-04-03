@@ -11,33 +11,41 @@
         state: present
       delegate_to: "{{ _hostname_ }}"
 
-    # - name: Initialize the db
-    #   ansible.builtin.command: >-
-    #     /usr/bin/postgresql-setup --initdb
+    - block:
+        - name: Initialize the db
+          ansible.builtin.command: >-
+            /usr/bin/postgresql-setup --initdb
+      rescue:
+        - ansible.builtin.file: 
+            path: /var/lib/pgsql/data
+            state: absent
+        - name: Initialize the db
+          ansible.builtin.command: >-
+            /usr/bin/postgresql-setup --initdb
+  
+    - name: Enable and start the postgresql service
+      ansible.builtin.service:
+        name: postgresql
+        enabled: yes
+        state: started
 
-    # - name: Enable and start the postgresql service
-    #   ansible.builtin.service:
-    #     name: postgresql
-    #     enabled: yes
-    #     state: started
+    - name: Register node with Red Hat Insights
+      ansible.builtin.command: >-
+        rhc connect
+        -o {{ lb1152_satellite_node_config_insights_org }}
+        -a {{ lb1152_satellite_node_config_insights_activation_key }}
+      delegate_to: "{{ _hostname_ }}"
 
-    # - name: Register node with Red Hat Insights
-    #   ansible.builtin.command: >-
-    #     rhc connect
-    #     -o {{ lb1152_satellite_node_config_insights_org }}
-    #     -a {{ lb1152_satellite_node_config_insights_activation_key }}
-    #   delegate_to: "{{ _hostname_ }}"
+    - name: Run insights-client to generate config files
+      ansible.builtin.command: insights-client --collector malware-detection
+      delegate_to: "{{ _hostname_ }}"
 
-    # - name: Run insights-client to generate config files
-    #   ansible.builtin.command: insights-client --collector malware-detection
-    #   delegate_to: "{{ _hostname_ }}"
-
-    # - name: Configure insight malware detection - 1
-    #   ansible.builtin.lineinfile:
-    #     line: "test_scan: false"
-    #     regexp: "^test_scan: true"
-    #     path: /etc/insights-client/malware-detection-config.yml
-    #   delegate_to: "{{ _hostname_ }}"
+    - name: Configure insight malware detection - 1
+      ansible.builtin.lineinfile:
+        line: "test_scan: false"
+        regexp: "^test_scan: true"
+        path: /etc/insights-client/malware-detection-config.yml
+      delegate_to: "{{ _hostname_ }}"
 
     # - name: Configure insight malware detection - 2
     #   ansible.builtin.lineinfile:
