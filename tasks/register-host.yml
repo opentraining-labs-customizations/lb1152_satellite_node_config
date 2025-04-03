@@ -30,8 +30,8 @@
     - name: Register Nodes to Satellite
       ansible.builtin.shell: >-
         subscription-manager register
-        --org "Default_Organization"
-        --activationkey AK_RHEL9
+        --org "{{ lb1152_satellite_node_config_org }}"
+        --activationkey "{{ lb1152_satellite_node_config_activation_key }}"
       delegate_to: "{{ _hostname_ }}"
 
  #Enable RHSM manage repos
