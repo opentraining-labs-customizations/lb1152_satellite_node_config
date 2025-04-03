@@ -15,19 +15,23 @@
         - name: Initialize the db
           ansible.builtin.command: >-
             /usr/bin/postgresql-setup --initdb
+          delegate_to: "{{ _hostname_ }}"
       rescue:
         - ansible.builtin.file: 
             path: /var/lib/pgsql/data
             state: absent
+          delegate_to: "{{ _hostname_ }}"
         - name: Initialize the db
           ansible.builtin.command: >-
             /usr/bin/postgresql-setup --initdb
+          delegate_to: "{{ _hostname_ }}"
   
     - name: Enable and start the postgresql service
       ansible.builtin.service:
         name: postgresql
         enabled: yes
         state: started
+      delegate_to: "{{ _hostname_ }}"
 
     - name: Register node with Red Hat Insights
       ansible.builtin.command: >-
