@@ -11,7 +11,7 @@
         state: present
       delegate_to: "{{ _hostname_ }}"
 
-    - name: Set original gold image hostname via hostnamectl
+    - name: Initialize the db
       ansible.builtin.command: >-
         /usr/bin/postgresql-setup --initdb
 
