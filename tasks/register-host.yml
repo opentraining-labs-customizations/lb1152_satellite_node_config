@@ -18,7 +18,7 @@
         dnf install
         http://satellite.{{ lb1152_satellite_node_config_internal }}/pub/katello-ca-consumer-latest.noarch.rpm
         -y
-      delegate_to: "{{ _hostname_ }}"
+      # delegate_to: "{{ _hostname_ }}"
 
   #Purge old Katello fact from Old Satellite
     # - name: Purge RHSM Katello facts
@@ -32,7 +32,7 @@
         subscription-manager register
         --org "{{ lb1152_satellite_node_config_org }}"
         --activationkey "{{ lb1152_satellite_node_config_activation_key }}"
-      delegate_to: "{{ _hostname_ }}"
+      # delegate_to: "{{ _hostname_ }}"
 
  #Enable RHSM manage repos
     # - name: RHSM config manage_repos enabled
